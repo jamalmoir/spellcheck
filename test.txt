@@ -1,0 +1,2 @@
+This is a a test text to test the spell checking program. There are some words that are real and some that are not adjfalkfad.
+This is another line the the file, hopefully this works OK!
