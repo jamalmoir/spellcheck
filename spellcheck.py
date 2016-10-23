@@ -1,4 +1,4 @@
-import re, string
+import re, string, math
 
 class Hashtable():
     def  __init__(self, size):
@@ -29,6 +29,15 @@ class Hashtable():
 
         return hash_num % self.size
 
+    def _generate_hash2(self, key):
+        """Return the (secondary) hash for the given key."""
+        hash_num = 1
+
+        for char in key:
+            hash_num *= ord(char)
+
+        return hash_num % self.size
+
     def probe(self, key):
         """Find the index where a key can be inserted or return False if found."""
         i = self._generate_hash(key)
@@ -42,7 +51,14 @@ class Hashtable():
 
             if self.keys[i] is None or probes >= self.size: break
 
-            i = 0 if i == self.size - 1 else i + 1
+            # linear probing
+            #i = (i + 1) % self.size
+
+            # quadratic probing
+            #i = (i + i**2) % self.size
+
+            # double hashing
+            i = (i + self._generate_hash2(key)) % self.size
 
         return (i, probes)
 
@@ -88,7 +104,7 @@ def clean_txt(strings):
 def spellcheck(dictionary, text, reporting=False):
     dict_words = clean_txt(load_txt(dictionary))
     text_words = clean_txt(load_txt(text))
-    hashtable = Hashtable(len(dict_words) * 3)
+    hashtable = Hashtable(int(len(dict_words) * 2))
     found = [0, 0] # Total found, aggregate found probes
     not_found = [0, 0] # Total not found, aggregate not found probes
 
