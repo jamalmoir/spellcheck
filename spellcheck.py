@@ -1,6 +1,8 @@
 import re, string, math
 
 class Hashtable():
+    """A hash table for storing and checking the existence of keys."""
+
     def  __init__(self, size):
         """Initiate hashtable with a size and list of empty keys."""
         self.keys = [None] * size
@@ -9,7 +11,7 @@ class Hashtable():
         self.load_factor = 0
 
     def _generate_hash(self, key):
-        """Return the hash for the given key."""
+        """Generate the hash for the given key."""
 
         '''
         # ASCII product
@@ -30,8 +32,8 @@ class Hashtable():
         return hash_num % self.size
 
     def _generate_hash2(self, key):
-        """Return the (secondary) hash for the given key."""
-        hash_num = 1
+        """Generate the (secondary) hash for the given key."""
+        hash_num = 5209 #3517
 
         for char in key:
             hash_num *= ord(char)
@@ -82,6 +84,7 @@ class Hashtable():
 
 
 def load_txt(path):
+    """Load words from the specified txt file into an array."""
     words = []
 
     with open(path, 'r') as f:
@@ -92,16 +95,22 @@ def load_txt(path):
 
 
 def clean_txt(strings):
-    regex = re.compile('[{}]'.format(re.escape(string.punctuation)))
-    cleaned = []
+    """Remove punctuation from strings in a list and convert to lowercase."""
+    punctuation_re = re.compile('[{}]'.format(re.escape(string.punctuation)))
+    empty_re = re.compile(r'[\s]+')
+    cleaned_strs= []
 
     for s in strings:
-        cleaned.append(regex.sub('', s).lower())
+        cleaned = punctuation_re.sub('', s).lower()
 
-    return cleaned
+        if cleaned:
+            cleaned_strs.append(cleaned)
+
+    return cleaned_strs
 
 
 def spellcheck(dictionary, text, reporting=False):
+    """Print any words from text that are not in dictionary."""
     dict_words = clean_txt(load_txt(dictionary))
     text_words = clean_txt(load_txt(text))
     hashtable = Hashtable(int(len(dict_words) * 2))
@@ -119,7 +128,8 @@ def spellcheck(dictionary, text, reporting=False):
                 not_found[0] += 1
                 not_found[1] += exists[1]
 
-            print("Word not found: {}".format(word))
+            print("Word not found: '{}'".format(word))
+
         elif reporting:
             found[0] += 1
             found[1] += exists[1]
